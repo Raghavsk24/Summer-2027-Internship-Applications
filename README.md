@@ -18,7 +18,6 @@ auto-apply/      The Claude skill:
   scripts/
     score.py       Verifies resume evidence and computes the fit score and verdict
     measure.py     Compiles LaTeX and measures page count, line fill, and page fill
-applications.csv Old application tracker (no longer updated; the tracker is now a Google Sheet).
 ```
 
 ## How the skill works
