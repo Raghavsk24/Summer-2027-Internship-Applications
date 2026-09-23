@@ -1,28 +1,9 @@
 %-------------------------
-% MASTER RESUME -- source of truth. NEVER SUBMIT THIS FILE OR ITS PDF (master/*.pdf is gitignored).
+% MASTER RESUME -- source of truth. Never submit this file or its PDF.
 % Resume in Latex
 % Author : Jake Gutierrez [Customized by Raghav Senthil Kumar]
 % License : MIT
 %------------------------
-%
-% HOW THIS FILE WORKS
-%  * Superset rule: every claim on any tailored/base resume must exist here. No page limit.
-%  * INVENTORY.md holds the raw answers. The comments next to each entry carry the verified facts.
-%  * Trailing comment on every bullet:   % core|optional | tags: a, b
-%      core     = keep by default in every tailored resume
-%      optional = first to cut when space is tight
-%  * Tag vocabulary: backend, frontend, fullstack, ml, llm, data, search, algorithms, hardware,
-%                    testing, product, leadership, entrepreneurship
-%  * Comment markers:
-%      FACTS = verified, not yet worked into a bullet
-%      TODO  = work for a later step
-%      GAPS  = still unknown -- do not invent
-%      !!    = current wording is inaccurate or overstated -- fix before any tailored resume copies it
-%  * Workflow: bullets get rewritten with resume-bullet-writer, then a tech-resume-optimizer pass.
-%    Rewritten so far: Clusion, Truck Pricing VLM, and (for the IBM resume) Citation Chain, EcoBin bullet 1, STEM E bullets 1+3.
-%    Every other bullet below is still the ORIGINAL wording.
-%  * Line-fill rule: the last line of every bullet must fill 90-100% of the line width. Fix by CUTTING words (padding is the fallback).
-%    Compile to a scratch dir (pdflatex -output-directory=...) so no build files land in the repo, then check fill.
 
 \documentclass[letterpaper,10pt]{article}
 
@@ -39,8 +20,6 @@
 
 
 %-----------EDUCATION-----------
-% Graduating in 3 years (May 2029, confirmed). No college GPA yet. No high school entry.
-% Coursework is exactly as listed. Activities stay one line until roles/contributions exist.
 \section{Education}
   \resumeSubHeadingListStart
     \resumeSubheading
@@ -57,17 +36,6 @@
 \section{Experience}
   \resumeSubHeadingListStart
 
-    % ENTRY: Clusion | tags: backend, search, fullstack | priority: high
-    % FACTS: team of 10 engineers, Agile. The org built on AWS and ran CI/CD; hosting was handled by the org.
-    % FACTS: each engineer owned separate features. Raghav built the ENTIRE document search engine for debate evidence.
-    % FACTS: stack for that part = Python FastAPI backend, Elasticsearch. The frontend was Next.js (how much Raghav built is unclear, so it is not claimed).
-    % FACTS: the IQR filter ran on the word-count distribution of tag, citation and evidence text.
-    % FACTS: relevance favors recency (results skew to the current month's topic, e.g. October 2025 results in October 2025).
-    % FACTS: "10K+" = people who have visited the site, NOT registered or active users. Always say "visitors".
-    % FACTS: revenue "couple thousand" (currency and period unconfirmed). NOT used in any bullet.
-    % DONE (bullet-writer + tech optimizer): ownership fixed ("Built a SaaS platform" -> built the search engine), users -> visitors,
-    %       AWS / Agile / team of 10 back-ported with accurate ownership (the GoDaddy tailored bullet still has the old overstated wording).
-    % GAPS: how recency was implemented (Elasticsearch date boost/decay?); retrieval-quality metric; which AWS services the org used; revenue figure.
     \resumeProjectHeading
       {\textbf{Founding Software Engineer $|$ Clusion}}{September 2025 -- January 2026}
       \resumeItemListStart
@@ -78,11 +46,6 @@
         \resumeItem{Implemented recency-based relevance so evidence from the current month's debate topic ranks first in results} % optional | tags: backend, search
       \resumeItemListEnd
 
-    % ENTRY: Jetson | tags: product, data | priority: low for SWE, high for product roles
-    % FACTS: ed-tech company that teaches entrepreneurship.
-    % FACTS: 3 features tested = user onboarding, gamified leaderboard, community hub.
-    % FACTS: onboarding A/B test ran one week and all 30 participants completed it. The onboarding redesign shipped.
-    % GAPS: what the report recommended beyond onboarding; completion rate of the old flow (needed for a true before/after).
     \resumeProjectHeading
       {\textbf{Product Development Intern $|$ Jetson}}{January 2025 -- February 2025}
       \resumeItemListStart
@@ -91,12 +54,6 @@
         \resumeItem{Redesigned user onboarding on \emph{Figma}, cutting it from \textbf{12 to 5 pages}, validated via \textbf{A/B testing} on 30 test users} % core | tags: product, frontend
       \resumeItemListEnd
 
-    % ENTRY: STEM E | tags: data | priority: low for SWE
-    % FACTS: STEM-awareness nonprofit. Tools: Hootsuite, Power BI, Microsoft Excel, plus some Python and pandas.
-    % FACTS: pitched to the Executive Director, who adopted the strategy. The 24% lift was measured over the following three-month quarter.
-    % DONE: bullet 1 now lists Python (pandas) and Power BI alongside Hootsuite and Excel (all confirmed used).
-    % DONE: bullet 3 states the Executive Director adopted the strategy. CUT FOR LINE-FILL (still true): the 24% was measured over the following quarter.
-    % GAPS: the worksheet says "how well the reviews were" -- confirm the metric is views/engagement before it goes in a bullet.
     \resumeProjectHeading
       {\textbf{Data Analytics Intern $|$ STEM E}}{June 2024 -- July 2024}
       \resumeItemListStart
@@ -109,20 +66,9 @@
 
 
 %-----------PROJECTS-----------
-% Rendered Stack lines are deferred to the tech-resume-optimizer pass (keyword decision).
 \section{Projects}
     \resumeSubHeadingListStart
 
-    % ENTRY: Truck Pricing VLM | tags: ml, llm, data, leadership | priority: high
-    % FACTS: led a team of 4 and designed the entire algorithm. Built for Kamion (YC S22); no Kamion feedback. Result: 2nd of 7 teams at the UIUC Founder's Hackathon.
-    % FACTS: dataset = 15,000 scraped listing images. Audit = de-duplicated images and removed non-USD price listings.
-    % FACTS: after every wrong prediction against labeled listings the JSON schema was revised, until the model labeled 10 consecutive images correctly for each of 3 features (condition, brand, primary subject).
-    % FACTS: the final schema extracts condition, brand, model and year, and filters non-truck images.
-    % FACTS: 87% accuracy = 87% of 30 samples (about 26/30).
-    % DONE (bullet-writer + tech optimizer): "RLHF"/"fine-tuned" removed (it was schema revisions). Sample size (30) now stated next to the 87%.
-    % !! Never say RLHF or fine-tuned.
-    % GAPS: (1) the "30": 30 schema revisions, or 10 images x 3 features = 30 correct labels? Bullets state only the 10-in-a-row criterion until confirmed.
-    %       (2) what "87% accuracy" means for a price (within +/-X% of listing price?) and whether the 30 samples were held out.
     \resumeProjectHeading
           {\textbf{Truck Pricing VLM} $|$ \href{https://truck-pricing-vlm.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Truck-Pricing-VLM}{\underline{Source Code}}}{September 2026}
           \resumeItemListStart
@@ -133,10 +79,6 @@
             \resumeItem{Built a \emph{quantile regression} pricing model on the extracted features, reaching \textbf{87\% accuracy} on \textbf{30 samples}} % core | tags: ml, algorithms
           \resumeItemListEnd
 
-    % ENTRY: SchoolPulse AI | tags: ml, backend, hardware, leadership | priority: medium
-    % FACTS: led a team of 5. Finalist at the USAII Global Hackathon (10 teams -- confirm whether 10 finalists or 10 total). Voice LLM = Gemma 4.
-    % FACTS: tools named so far = AI trash can, water level sensor.
-    % GAPS: name of the 3rd tool; data ingestion rate; anomaly-detection results; whether it ran at a real school.
     \resumeProjectHeading
           {\textbf{SchoolPulse AI} $|$ \href{https://school-pulse-ai.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/vignesh-nagarajan-vn/SchoolPulse-AI}{\underline{Source Code}}}{June 2026}
           \resumeItemListStart
@@ -145,12 +87,6 @@
             \resumeItem{Led a team of 5 across project ideation, development and presentation. \textbf{\underline{Finalist at USAII Global Hackathon}}} % core | tags: leadership
           \resumeItemListEnd
 
-    % ENTRY: Citation Chain | tags: frontend, backend, llm, data | priority: high
-    % FACTS: paper data is stored on Supabase (PostgreSQL). Raghav wrote SQL to filter papers by field, year and citation count.
-    % DONE: the old run-on bullet is split into ingestion and RAG bullets; a SQL bullet was added.
-    % CUT FOR LINE-FILL (still true, re-add if room): ingestion is in batched requests of 100; RAG answers questions about the citation graph via the Vercel AI SDK.
-    % GAPS (all still ??? in INVENTORY.md): graph size and depth, load times, what gets embedded and how it is chunked,
-    %       caching / rate limits, TypeScript vs JavaScript, solo vs team, users.
     \resumeProjectHeading
           {\textbf{Citation Chain} $|$ \href{https://citation-chain-two.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Citation-Chain}{\underline{Source Code}}}{June 2026}
           \resumeItemListStart
@@ -160,11 +96,6 @@
             \resumeItem{Stored paper data on \emph{Supabase} (\emph{PostgreSQL}) and wrote \emph{SQL} queries to filter papers by field, year and citation count} % core | tags: backend, data
           \resumeItemListEnd
 
-    % ENTRY: EcoBin | tags: ml, hardware, data | priority: high
-    % FACTS: paper on arXiv (2606.15547), 2 datasets on Kaggle, 2nd at the Arizona State Science Fair.
-    % FACTS: framework = PyTorch (confirmed by Raghav). NumPy was also used in EcoBin (where exactly is not stated, so NumPy stays a skills-line item).
-    % GAPS (all still ??? in INVENTORY.md): contamination-detection F1, test-set size, whether TensorFlow/Keras were also used,
-    %       what ran inference and how the 2 s latency was measured, Kaggle dataset names, solo vs team.
     \resumeProjectHeading
           {\textbf{EcoBin} $|$ \href{https://arxiv.org/abs/2606.15547}{\underline{Research Paper}} $|$ \href{https://github.com/Raghavsk24/EcoBin}{\underline{Source Code}}}{March 2026 -- May 2026}
           \resumeItemListStart
@@ -173,10 +104,6 @@
             \resumeItem{Engineered a smart bin prototype using \emph{Arduino Uno} that sorts the waste item with \textbf{less than 2 second latency}} % optional | tags: hardware
           \resumeItemListEnd
 
-    % ENTRY: Chronos | tags: fullstack, algorithms, entrepreneurship | priority: high
-    % FACTS: won the 2025 Congressional App Challenge. Licensed to 8 startups, 2 LOIs worth $3.5K.
-    % GAPS (all still ??? in INVENTORY.md): how slots are ranked, usage numbers, whether 30+ people was tested or is a design limit,
-    %       what "licensed" meant and the LOI terms, APIs used, Congressional App Challenge level, solo vs team.
     \resumeProjectHeading
           {\textbf{Chronos} $|$ \href{https://usechronos.live/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Chronos}{\underline{Source Code}}}{December 2025}
           \resumeItemListStart
@@ -190,28 +117,6 @@
 
 
 %-----------TECHNICAL SKILLS-----------
-% Superset of every skill on any resume (base, GoDaddy, State Farm) plus pandas/Power BI/Hootsuite/Excel from STEM E.
-% Evidence map = INVENTORY.md section 4. Confirmed true but no evidence written yet: Node.js, MySQL, Git CI/CD, API Development, NumPy (used in EcoBin, placement unstated).
-% Evidenced 2026-09-20: SQL, PostgreSQL, Supabase (Citation Chain bullets); PyTorch (EcoBin bullet 1).
-% No evidence written yet (defend or remove): Flask, HTML/CSS, JavaScript, Hugging Face, Google Cloud, Docker, Bun,
-%   Claude Code, Codex, TensorFlow, Keras, scikit-learn, OpenCV, Grad-CAM.
-% TypeScript is NOT listed: usage unknown.
-% KEYWORD TERMS added 2026-09-20 for the five IBM resumes (Raghav: "add as many relevant keywords as possible"). Each is a description of work
-% already in the bullets above. Be ready to explain every one in an interview:
-%   Data Pipelines / Data Ingestion / ETL = Citation Chain (pulls papers from OpenAlex + Semantic Scholar, backfills metadata, stores on Supabase).
-%   Data Quality / Validation / Cleaning  = Clusion (de-duplication, source-URL validation, IQR outlier filter); Truck VLM (de-dup, non-USD filter).
-%   Structured / unstructured data        = Truck VLM (photos -> structured features via JSON schema); Clusion (debate-evidence text).
-%   Data Mining (Raghav's term)           = Truck VLM scraping of 15,000 listing images.
-%   AI Agents (Raghav's term)             = Truck VLM Claude agent, Citation Chain RAG agent, Chronos scheduling agent.
-%   Prompt Engineering                    = Truck VLM JSON schema revised after each wrong prediction.
-%   REST APIs                             = FastAPI backends; consumed OpenAlex, Semantic Scholar, Google Calendar APIs (confirm "REST" if asked).
-%   Full-Stack Development                = Chronos (React/Firebase), SchoolPulse (FastAPI + Next.js), Clusion.
-%   Unit Testing / Authentication         = Chronos (14 unit and integration tests; lobby authenticates invited participants).
-%   Vector Store                          = Supermemory holds Citation Chain's session-scoped vector documents.
-%   Microsoft: Power BI and Excel only (STEM E). Not Azure, .NET, C#, Power Platform apps or ServiceNow.
-% NOT claimed anywhere (no evidence): Azure, .NET, C#, ServiceNow, Kubernetes, Spark, Kafka, Airflow, dbt, Databricks, Snowflake, Scala, R,
-%   TypeScript, Go, LangChain, LangGraph, LlamaIndex, MCP, Cursor, GitHub Copilot, Tableau, embeddings work, data modeling, governance.
-% Category names/grouping get finalized in the tech-resume-optimizer pass.
 \section{Technical Skills}
  \begin{itemize}[leftmargin=0.15in, label={}]
     \item{
@@ -228,14 +133,13 @@
 
 
 %-----------CERTIFICATIONS-----------
-% Both are from INVENTORY.md. Keep this section only for resumes with room.
 \section{Certifications}
  \begin{itemize}[leftmargin=0.15in, label={}]
     \item{
      \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
        % core
        \textbf{Harvard CS50x:} Introduction to Computer Science & November 2024 \\
-       % optional -- "Basic" level reads weak, so cut this one first
+       % optional
        \textbf{HackerRank Problem Solving (Basic)} Certificate & August 2026 \\
      \end{tabular*}
     }
