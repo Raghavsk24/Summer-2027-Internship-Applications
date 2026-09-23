@@ -1,6 +1,0 @@
-- Target term: Summer 2027 only
-- Expected graduation: May 2029 (currently a first-year; one year of study completed by Summer 2027)
-- Work authorization: US permanent resident (not a citizen); no sponsorship needed
-- Security clearance: none; not a citizen, so cannot obtain one
-- Demographics: South Asian male
-- College GPA: none yet

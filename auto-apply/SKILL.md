@@ -10,13 +10,13 @@ Pipeline: **URL → collect postings → assess each → tailor resumes for the 
 You do the judgment work (eligibility, skill matching, content selection, rewriting, auditing). The scripts do only mechanical work: `scripts/score.py` verifies evidence and computes fit; `scripts/measure.py` compiles LaTeX and measures the PDF. This skill never submits an application.
 
 **Inputs** (paths relative to the repo root):
-- Candidate facts: `skills/auto-apply/candidate.md`
+- Candidate facts: `auto-apply/candidate.md`
 - Master resume: `master/Raghav_Senthil_Kumar_Master_Resume.tex`. Use the `.tex` file, not the PDF next to it.
 - Base template: `base/Raghav_Senthil_Kumar_Resume.tex`
 - Shared preamble: `preamble.tex`. Both resumes pull it in with `\input{../preamble}`.
 - Tracker: `applications.csv`
-- Scorer: `skills/auto-apply/scripts/score.py`
-- Measurer: `skills/auto-apply/scripts/measure.py`
+- Scorer: `auto-apply/scripts/score.py`
+- Measurer: `auto-apply/scripts/measure.py`
 
 The template uses no `fontspec`, so the engine is `pdflatex`. measure.py detects this on its own.
 
@@ -82,7 +82,7 @@ Evidence must be copied verbatim from the master resume. Never paraphrase it.
 Pass the JSON through stdin; never write intermediate JSON files. From the repo root:
 
 ```bash
-python skills/auto-apply/scripts/score.py --resume master/Raghav_Senthil_Kumar_Master_Resume.tex <<'EOF'
+python auto-apply/scripts/score.py --resume master/Raghav_Senthil_Kumar_Master_Resume.tex <<'EOF'
 { ...json... }
 EOF
 ```
@@ -163,7 +163,7 @@ From the posting's assessment, take the company name, role title, work location,
 ### 4.4 Compile and measure
 
 ```bash
-python skills/auto-apply/scripts/measure.py <path.tex>
+python auto-apply/scripts/measure.py <path.tex>
 ```
 
 - It compiles twice in a temporary directory, copies the PDF next to the .tex, and prints JSON: `page_count`, `right_edge`, `page_fill`, and `bullets[]` with `index`, `page`, `preview` (first 8 words), `line_count`, `last_line_fill_pct`, `pass`.
