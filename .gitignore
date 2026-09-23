@@ -9,3 +9,6 @@
 __pycache__/
 .DS_Store
 .vscode/
+
+# Private candidate facts for the job-description-assessor skill
+.claude/skills/job-description-assessor/candidate.md
