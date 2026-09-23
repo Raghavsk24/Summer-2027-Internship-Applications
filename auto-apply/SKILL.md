@@ -1,11 +1,11 @@
 ---
 name: auto-apply
-description: End-to-end internship pipeline for Raghav. Given a URL (a careers page, a job-search results page, or a single posting), it collects the internship postings, checks eligibility and scores each one against the master resume (Apply / Review / Skip), tailors a one-page LaTeX resume (PDF + .tex) for every posting worth applying to, logs them in applications.csv, and commits and pushes the results to the repo. Use whenever the user shares a job URL or posting and asks to run auto-apply, find which jobs are worth applying to, assess or score a posting, or tailor / ATS-optimize the resume for it. It never submits applications.
+description: End-to-end internship pipeline for Raghav. Given a URL (a careers page, a job-search results page, or a single posting), it collects the internship postings, checks eligibility and scores each one against the master resume (Apply / Review / Skip), tailors a one-page LaTeX resume (PDF + .tex) for every posting worth applying to, commits and pushes those resumes to the repo, adds each one to the Internship Application Tracker Google Sheet, and summarizes everything in the chat. Use whenever the user shares a job URL or posting and asks to run auto-apply, find which jobs are worth applying to, assess or score a posting, or tailor / ATS-optimize the resume for it. It never submits applications.
 ---
 
 # Auto-Apply
 
-Pipeline: **URL → collect postings → assess each → tailor resumes for the ones worth applying to → update the repo → report.**
+Pipeline: **URL → collect postings → assess each → tailor resumes for the ones worth applying to → commit them to the repo → add them to the Google Sheet tracker → summarize in chat.**
 
 You do the judgment work (eligibility, skill matching, content selection, rewriting, auditing). The scripts do only mechanical work: `scripts/score.py` verifies evidence and computes fit; `scripts/measure.py` compiles LaTeX and measures the PDF. This skill never submits an application.
 
@@ -14,7 +14,7 @@ You do the judgment work (eligibility, skill matching, content selection, rewrit
 - Master resume: `master/Raghav_Senthil_Kumar_Master_Resume.tex`. Use the `.tex` file, not the PDF next to it.
 - Base template: `base/Raghav_Senthil_Kumar_Resume.tex`
 - Shared preamble: `preamble.tex`. Both resumes pull it in with `\input{../preamble}`.
-- Tracker: `applications.csv`
+- Tracker: the **Internship Application Tracker** Google Sheet on Raghav's Google Drive, file ID `1OPAJhLDzKnxyn1oOEVu6YY1ZwhrUdbzq2O4vxvycIkQ` (https://docs.google.com/spreadsheets/d/1OPAJhLDzKnxyn1oOEVu6YY1ZwhrUdbzq2O4vxvycIkQ/edit). If that ID stops resolving, search Drive for the title. `applications.csv` in the repo is no longer updated.
 - Scorer: `auto-apply/scripts/score.py`
 - Measurer: `auto-apply/scripts/measure.py`
 
@@ -31,7 +31,7 @@ The template uses no `fontspec`, so the engine is `pdflatex`. measure.py detects
 3. Screen out, without a full assessment, and record the reason for the final report:
    - **Not an internship:** full-time, new-grad, or experienced roles.
    - **Clearly non-technical:** for example HR, marketing, sales, legal, or finance internships with no technical skills.
-   - **Already tracked:** `applications.csv` already has a row with the same company and job ID, or the same company and role when there is no job ID.
+   - **Already tracked:** the tracker sheet already has a row with the same Application Portal URL (or the same job ID inside it), or the same Company and Position. Read the sheet once with the Drive connector's `read_file_content` at the start of the run.
 4. If more than 20 postings remain, show the list and ask the user whether to assess all of them or a subset before continuing.
 
 ## Phase 2: Assess each posting
@@ -142,6 +142,7 @@ From the posting's assessment, take the company name, role title, work location,
 - **Projects** are ordered by relevance score, highest first, and cut from the bottom.
 - Start the draft with every experience and project, and cut only after measure.py reports more than one page. The page must also end full (see Page-fill rule), so never cut more than the overflow requires.
 - Within each entry, pick the 2 to 4 bullets that evidence the highest-weight skills. Prefer `core` bullets when scores tie.
+- **Minimum length:** every Experience and Projects entry's bullets must span at least 3 lines in total, in addition to the 2–4 bullet rule. Two one-line bullets (2 lines) is too short. Reach 3 lines by adding a third master bullet, or by growing a bullet into two full lines with detail its master bullet states. If an entry cannot reach 3 lines truthfully, it is a candidate to drop.
 
 ### 4.2 Build the draft
 
@@ -166,8 +167,9 @@ From the posting's assessment, take the company name, role title, work location,
 python auto-apply/scripts/measure.py <path.tex>
 ```
 
-- It compiles twice in a temporary directory, copies the PDF next to the .tex, and prints JSON: `page_count`, `right_edge`, `page_fill`, and `bullets[]` with `index`, `page`, `preview` (first 8 words), `line_count`, `last_line_fill_pct`, `pass`.
+- It compiles twice in a temporary directory, copies the PDF next to the .tex, and prints JSON: `page_count`, `right_edge`, `page_fill`, `entries[]`, and `bullets[]` with `index`, `entry`, `page`, `preview` (first 8 words), `line_count`, `last_line_fill_pct`, `pass`.
 - `page_fill` reports the gap between the last line and the bottom of the text area: `bottom_gap_pt`, `line_height_pt`, `free_lines` (gap ÷ line height), and `page_full` (true when the gap is less than one line, so no further line fits).
+- `entries[]` groups consecutive bullets under the heading line above them: `entry`, `heading` (for example `Chronos | Live Website | Source Code December 2025`), `bullets` (indexes), `bullet_count`, and `line_count` (total lines the entry's bullets span). Entry 1 is Education.
 - Bullets are numbered in page order, so the two Education lines (Coursework, Activities) are bullets 1 and 2. Use `preview` to map each bullet back to its `\resumeItem` in the .tex.
 - On a compile error it prints the LaTeX log lines and exits non-zero. Fix the .tex and rerun.
 - If the TeX engine is missing, install it first: `apt-get install -y texlive-latex-extra`, plus `texlive-xetex` if the template uses fontspec. measure.py installs pdfplumber itself if needed.
@@ -207,7 +209,7 @@ When `free_lines` is 1 or more, add lines in this order until the page is full, 
 3. **Grow a one-line bullet into two full lines** using detail its master bullet states or clearly implies (for example, restoring words trimmed earlier). This costs exactly 1 line and is the right move when `free_lines` is between 1 and 1.1.
 4. **Add a Skills category line** built from a master Skills category not yet shown (for example Data & Analytics), up to 6 lines in total.
 
-Every added line follows the same rules as the rest of the page: traceable to the master, inside the embellishment boundary, 90–100% line fill, and at most 4 bullets per entry. If the page overflows after an addition, undo it and try the next, smaller option.
+Every added line follows the same rules as the rest of the page: traceable to the master, inside the embellishment boundary, 90–100% line fill, and 2–4 bullets and at least 3 lines per entry. If the page overflows after an addition, undo it and try the next, smaller option.
 
 ### Audit loop
 
@@ -215,7 +217,7 @@ Run these pass/fail checks:
 
 1. Exactly one page (`page_count == 1`).
 2. Only the four sections: Education, Experience, Projects, Skills.
-3. Every entry has 2 to 4 bullets.
+3. Every entry has 2 to 4 bullets, and every Experience and Projects entry's bullets span at least 3 lines (`entries[].line_count >= 3`, skipping entry 1, Education).
 4. Every Experience and Projects bullet's last line measures 90 to 100% (`pass: true`).
 5. Every bullet traces to a specific master-resume entry, with no claims outside the embellishment boundary. Check every number, tool, and outcome against the master bullet it came from.
 6. Every high-weight matched skill appears at least once on the page.
@@ -227,12 +229,12 @@ Fix the failures, recompile, and re-check. Stop when all checks pass or after 3 
 When rules conflict, this is the precedence:
 1. Truthfulness
 2. One page
-3. Section and bullet counts
+3. Section, bullet, and entry-length counts
 4. Full page
 5. Line fill
 6. Keyword density
 
-## Phase 5: Write the output and update the repo
+## Phase 5: Save the resumes, commit, and update the tracker
 
 ### Files
 
@@ -249,33 +251,33 @@ tailored/Company_Name_Target_Role_Month_Year/
 - The .tex sits two levels below the repo root, so its preamble line is `\input{../../preamble}`.
 - Draft in that same directory, overwriting the two files on each iteration, so the final PDF is the one measure.py last produced from the final .tex.
 
-### Tracker
-
-Append one row per tailored resume to `applications.csv`, keeping its header and column order:
-
-| Column | Value |
-|---|---|
-| company | Company name |
-| role | Role title as posted |
-| job_id | Job ID, or empty |
-| folder | `tailored/<directory>` |
-| resume_file | the PDF's file name |
-| cover_letter, date_applied, method | empty |
-| status | `Tailored` |
-| next_step | `Submit application` |
-| notes | `Fit NN%; <posting URL>` |
-
-Quote any field that contains a comma. Do not edit existing rows.
-
 ### Commit and push
 
-1. Stage only this run's files: `git add tailored/<each new directory> applications.csv`. Never stage other changes in the working tree, and leave them as they are.
+1. Stage only this run's files: `git add tailored/<each new directory>`. Never stage other changes in the working tree, and leave them as they are.
 2. Commit with a message naming the postings, for example `Tailor resumes: Acme Robotics (Software Engineering Intern), Globex (Data Science Intern)`, ending with any attribution lines the environment requires.
 3. Push to the current branch's upstream (`git push`). If the push fails, do not force it; report the error and leave the commit local.
 
-**On claude.ai (no repo):** create each directory under `/mnt/user-data/outputs` instead, paste the contents of `preamble.tex` in place of the `\input` line so each .tex is self-contained, present the files, and skip the tracker and git steps.
+**On claude.ai (no repo):** create each directory under `/mnt/user-data/outputs` instead, paste the contents of `preamble.tex` in place of the `\input` line so each .tex is self-contained, present the files, and skip the git steps. Still update the tracker.
 
-## Phase 6: Report in chat
+### Update the Internship Application Tracker
+
+Add one row per tailored resume to the tracker sheet's application table, the table whose header row reads:
+
+| Application Status | Company | Position | Date Applied | Details | Application Portal |
+|---|---|---|---|---|---|
+| `In Progress` | Company name | Role title exactly as posted | empty | `- Auto-apply fit NN% - Tailored resume: tailored/<directory>/` plus any key posting facts, such as work location, program length, or an eligibility note | Posting URL |
+
+- Put new rows in the first empty rows directly below the last filled row of that table. Never edit existing rows, and never touch the Category / Count summary block above the table, since its counts update on their own.
+- **How to write:** the Drive connector can read the sheet but cannot edit cells. Use, in order:
+  1. a connected tool that can write Google Sheets cells, if one is available;
+  2. otherwise, the browser where Raghav is signed in to Google (Claude in Chrome in the desktop app): open the sheet URL, click the Application Status cell of the first empty row, and type each row's six values with Tab between cells and Enter at the end of the row.
+- **Verify:** re-read the sheet with `read_file_content` and confirm each new row appears exactly once, with every value in the right column. Fix any misplaced cell.
+- If no write path works, put the rows in the chat as tab-separated lines ready to paste, and say plainly that the tracker was not updated.
+
+## Phase 6: Summarize in chat
+
+The summary goes in the chat response itself. Never save it to a file.
+
 
 1. **Summary table** of every posting found, including screened-out ones:
 
@@ -295,3 +297,4 @@ Quote any field that contains a comma. Do not edit existing rows.
 3. **Skipped postings:** one line each with the reason. For ineligible ones, quote the clause.
 
 4. **Repo:** the commit hash, the files it added, and whether the push succeeded.
+5. **Tracker:** the rows added to the Internship Application Tracker (Company, Position), and whether the write was verified. If it was not updated, include the paste-ready rows.

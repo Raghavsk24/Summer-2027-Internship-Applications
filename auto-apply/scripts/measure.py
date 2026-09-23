@@ -3,7 +3,7 @@
 
 Compiles in a temporary directory (aux/log files never touch the .tex's
 folder), then reports page count and, for every bullet, how full its last
-line is. Prints JSON to stdout and copies the PDF next to the .tex.
+line is, and how many lines each entry's bullets span. Prints JSON to stdout and copies the PDF next to the .tex.
 
 Usage:
     python scripts/measure.py <path.tex> [--engine pdflatex|xelatex] [--bullet-chars "•"]
@@ -160,21 +160,30 @@ def last_text_bottom(page):
 
 
 def find_bullets(pdf, glyphs):
+    """Bullets in page order. Consecutive bullets with no other line between
+    them share an entry, headed by the last non-bullet line above them."""
     bullets = []
+    entry, heading = 0, ""
     for page_no, page in enumerate(pdf.pages, start=1):
         words = page.extract_words(x_tolerance=WORD_GAP, return_chars=True)
-        current = None
+        current, in_list = None, False
         for line in group_lines(words):
             hit = split_glyph(line, glyphs)
             if hit:
+                if not in_list:
+                    entry += 1
                 text_left, first_words = hit
-                current = {"page": page_no, "text_left": text_left,
+                current = {"page": page_no, "text_left": text_left, "entry": entry,
+                           "heading": heading,
                            "lines": [{"x1": line["x1"], "words": first_words}]}
                 bullets.append(current)
+                in_list = True
             elif current and line["x0"] >= current["text_left"] - 1.0:
                 current["lines"].append({"x1": line["x1"], "words": line["words"]})
             else:
-                current = None  # heading or section line ends the bullet
+                # Heading or section line: ends the bullet and the entry.
+                current, in_list = None, False
+                heading = " ".join(w["text"] for w in line["words"])
         # a bullet never continues across a page break
     return bullets
 
@@ -210,12 +219,23 @@ def main():
         words = [w["text"] for l in b["lines"] for w in l["words"]]
         report.append({
             "index": i,
+            "entry": b["entry"],
             "page": b["page"],
             "preview": " ".join(words[:8]),
             "line_count": len(b["lines"]),
             "last_line_fill_pct": round(fill, 1),
             "pass": FILL_MIN <= round(fill, 1) <= FILL_MAX,
         })
+
+    entries = []
+    for b, r in zip(bullets, report):
+        if not entries or entries[-1]["entry"] != b["entry"]:
+            entries.append({"entry": b["entry"], "heading": b["heading"],
+                            "bullets": [], "line_count": 0})
+        entries[-1]["bullets"].append(r["index"])
+        entries[-1]["line_count"] += r["line_count"]
+    for e in entries:
+        e["bullet_count"] = len(e["bullets"])
 
     # Gap between the last line and the bottom of the text area on the last page.
     # Under one line height the page is full: no further line can fit.
@@ -237,6 +257,7 @@ def main():
         "page_count": page_count,
         "right_edge": None if right_edge is None else round(right_edge, 2),
         "page_fill": page_fill,
+        "entries": entries,
         "bullets": report,
     }, sys.stdout, indent=2, ensure_ascii=False)
     sys.stdout.write("\n")
