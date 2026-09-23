@@ -18,23 +18,4 @@ archive/    Closed/rejected application folders (move here, never delete)
 applications.csv   Tracker: which version went where, and its status
 ```
 
-## Workflow for a new application
 
-1. Update `master/` first if there's anything new (project, skill, metric). Commit it.
-2. `mkdir tailored/<Company>_<Role>-Intern_<YYYY-MM>`, then copy in `base/*.tex` and `templates/job-posting.md`.
-3. Fill in `job-posting.md` with the full posting text.
-4. Tailor the resume by pulling bullets from master. `\input{../../shared/preamble}` is the preamble path.
-5. Compile to PDF, then run `tools/check_line_fill.py`.
-6. Add a row to `applications.csv`.
-7. Commit as `tailored/<folder>`. After submitting, commit again as `applied/<folder>` and tag it:
-   `git tag applied/<folder>`. The tag pins the exact PDF that was sent.
-
-## Tracker statuses
-
-`Tailored` → `Applied` → `OA` → `Interview` → `Offer` / `Rejected` / `Withdrawn`
-
-## Rules
-
-- Never edit master for a single application; tailor in the application's folder.
-- Don't overwrite a PDF after it has been sent. Put changes in a new folder, or use the tag to recover it.
-- Move dead applications to `archive/` instead of deleting them.
