@@ -150,7 +150,12 @@ From the posting's assessment, take the company name, role title, work location,
 - Use exactly four sections, with these headers: `Education`, `Experience`, `Projects`, `Skills`. (The base template's `Technical Skills` becomes `Skills`.)
 - Add `Phoenix, AZ $|$ ` to the start of the header's contact line only if the posting's work location is in Arizona. The company's headquarters and remote roles do not count. Otherwise the header shows no location.
 - Education comes from the master unchanged, except that its Activities line must fit on one line. Drop the least relevant activities to make it fit, and never list one twice.
-- Keep the base template's Skills layout: 4 category lines (up to 6 when the Page-fill rule needs them), each fitting on one line. measure.py only measures bullets, so check the Skills lines in the PDF's text (a wrapped line shows up as an extra line) and drop the lowest-weight skill from any line that wraps.
+- **Skills section layout:** 4 or 5 category lines (never all 6), each fitting on one line.
+  - Take the categories from the master's six Skills lists and keep the master's labels exactly: `Programming Languages`, `Frameworks/Platforms`, `DevTools`, `AI/ML`, `Data & Analytics`, `Concepts/Practices`. Do not rename, merge, or invent categories.
+  - Pick the 4 or 5 lists most relevant to the posting. Keep every list that holds a posting-matched skill, and drop the least relevant one (for example `Data & Analytics` for a backend SWE role, or `DevTools` for an analytics role).
+  - Pull in as many ATS-relevant skills from the master's skills inventory as fit on each line. Order: posting-matched skills first, highest weight first. Then add the other master skills in that list that an ATS for this role would look for. Then add the rest of that list until the line is full.
+  - A skill appears on only one line, under its master category. Only skills from the master's Skills section may appear, and unmatched posting skills are never added.
+  - measure.py only measures bullets, so check the Skills lines in the PDF's text (a wrapped line shows up as an extra line) and drop the lowest-priority skill from any line that wraps.
 
 ### 4.3 Rewrite bullets
 
@@ -207,7 +212,7 @@ When `free_lines` is 1 or more, add lines in this order until the page is full, 
 1. **Restore a dropped project,** the next one by relevance, with 2 bullets. This costs about 4 lines (heading, spacing, bullets), so use it when `free_lines` is 4 or more.
 2. **Add an unused master bullet** to an entry that has fewer than 4, taking the bullet that evidences the highest-weight posting skill first. Each one-line bullet costs about 1.1 lines. Bring its wording to 90–100% line fill as usual.
 3. **Grow a one-line bullet into two full lines** using detail its master bullet states or clearly implies (for example, restoring words trimmed earlier). This costs exactly 1 line and is the right move when `free_lines` is between 1 and 1.1.
-4. **Add a Skills category line** built from a master Skills category not yet shown (for example Data & Analytics), up to 6 lines in total.
+4. **Add a Skills category line** built from a master Skills category not yet shown, up to 5 lines in total, following the Skills layout rules.
 
 Every added line follows the same rules as the rest of the page: traceable to the master, inside the embellishment boundary, 90–100% line fill, and 2–4 bullets and at least 3 lines per entry. If the page overflows after an addition, undo it and try the next, smaller option.
 
@@ -223,6 +228,7 @@ Run these pass/fail checks:
 6. Every high-weight matched skill appears at least once on the page.
 7. No verb is repeated within an entry, and tense is consistent: past tense for past roles, present tense for current ones. A role is current if its end date is "Present" or later than today.
 8. The page is full: the last line is less than one line height from the bottom margin (`page_fill.page_full: true`).
+9. The Skills section has 4 or 5 lines, each with a master category label, each fitting on one line, and no skill appears on more than one line.
 
 Fix the failures, recompile, and re-check. Stop when all checks pass or after 3 iterations. If it stops at the cap, record the checks that still fail for the report.
 
