@@ -141,8 +141,8 @@ From the posting's assessment, take the company name, role title, work location,
 - **Experience** stays in reverse-chronological order. Drop an entry only if space forces it.
 - **Projects** are ordered by relevance score, highest first, and cut from the bottom.
 - Start the draft with every experience and project, and cut only after measure.py reports more than one page. The page must also end full (see Page-fill rule), so never cut more than the overflow requires.
-- Within each entry, pick the 2 to 4 bullets that evidence the highest-weight skills. Prefer `core` bullets when scores tie.
-- **Minimum length:** every Experience and Projects entry's bullets must span at least 3 lines in total, in addition to the 2–4 bullet rule. Two one-line bullets (2 lines) is too short. Reach 3 lines by adding a third master bullet, or by growing a bullet into two full lines with detail its master bullet states. If an entry cannot reach 3 lines truthfully, it is a candidate to drop.
+- Within each entry, pick the bullets that evidence the highest-weight skills, within the entry-length limit below. Prefer `core` bullets when scores tie.
+- **Entry length:** every Experience and Projects entry's bullets span **3 to 6 lines** in total. Count every wrapped line of every bullet (`entries[].line_count`); the entry's heading line does not count. Use at least 3 bullets per entry. If an entry runs past 6 lines, condense or cut its lowest-weight bullet (or merge two short ones) until it fits. When space is tight, drop the lowest-relevance project instead of taking any entry below 3 lines or 3 bullets. If an entry cannot reach 3 lines and 3 bullets truthfully, drop it.
 
 ### 4.2 Build the draft
 
@@ -209,12 +209,12 @@ Embellishment inside this boundary is encouraged.
 The resume always runs the full length of the page: the last line sits less than one line height above the bottom margin (`page_fill.page_full: true`). Never fill space by changing margins, font size, or vertical spacing, because the base template owns layout. Fill it with content.
 
 When `free_lines` is 1 or more, add lines in this order until the page is full, re-measuring after each change:
-1. **Restore a dropped project,** the next one by relevance, with 2 bullets. This costs about 4 lines (heading, spacing, bullets), so use it when `free_lines` is 4 or more.
-2. **Add an unused master bullet** to an entry that has fewer than 4, taking the bullet that evidences the highest-weight posting skill first. Each one-line bullet costs about 1.1 lines. Bring its wording to 90–100% line fill as usual.
+1. **Restore a dropped project,** the next one by relevance, with 3 one-line bullets. This costs about 5 lines (heading, spacing, bullets), so use it when `free_lines` is 5 or more.
+2. **Add an unused master bullet** to an entry whose bullets span fewer than 6 lines, taking the bullet that evidences the highest-weight posting skill first. Each one-line bullet costs about 1.1 lines. Bring its wording to 90–100% line fill as usual.
 3. **Grow a one-line bullet into two full lines** using detail its master bullet states or clearly implies (for example, restoring words trimmed earlier). This costs exactly 1 line and is the right move when `free_lines` is between 1 and 1.1.
 4. **Add a Skills category line** built from a master Skills category not yet shown, up to 5 lines in total, following the Skills layout rules.
 
-Every added line follows the same rules as the rest of the page: traceable to the master, inside the embellishment boundary, 90–100% line fill, and 2–4 bullets and at least 3 lines per entry. If the page overflows after an addition, undo it and try the next, smaller option.
+Every added line follows the same rules as the rest of the page: traceable to the master, inside the embellishment boundary, 90–100% line fill, and 3–6 lines (at least 3 bullets) per entry. If the page overflows after an addition, undo it and try the next, smaller option.
 
 ### Audit loop
 
@@ -222,7 +222,7 @@ Run these pass/fail checks:
 
 1. Exactly one page (`page_count == 1`).
 2. Only the four sections: Education, Experience, Projects, Skills.
-3. Every entry has 2 to 4 bullets, and every Experience and Projects entry's bullets span at least 3 lines (`entries[].line_count >= 3`, skipping entry 1, Education).
+3. Every Experience and Projects entry's bullets span 3 to 6 lines, with at least 3 bullets (`3 <= entries[].line_count <= 6` and `entries[].bullet_count >= 3`, skipping entry 1, Education, whose Coursework and Activities lines are exempt).
 4. Every Experience and Projects bullet's last line measures 90 to 100% (`pass: true`).
 5. Every bullet traces to a specific master-resume entry, with no claims outside the embellishment boundary. Check every number, tool, and outcome against the master bullet it came from.
 6. Every high-weight matched skill appears at least once on the page.
@@ -235,7 +235,7 @@ Fix the failures, recompile, and re-check. Stop when all checks pass or after 3 
 When rules conflict, this is the precedence:
 1. Truthfulness
 2. One page
-3. Section, bullet, and entry-length counts
+3. Section counts and entry length (3–6 lines, at least 3 bullets)
 4. Full page
 5. Line fill
 6. Keyword density
