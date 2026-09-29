@@ -3,4 +3,4 @@
 - Work authorization: US permanent resident (not a citizen); no sponsorship needed
 - Security clearance: none; not a citizen, so cannot obtain one
 - Demographics: South Asian male
-- College GPA: none yet
+- College GPA: none yet (Assume 4.0)
