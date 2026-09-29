@@ -1,13 +1,14 @@
 ---
 name: auto-apply
-description: End-to-end internship pipeline for Raghav. Given a URL (a careers page, a job-search results page, or a single posting), it collects the internship postings, checks eligibility and scores each one against the master resume (Apply / Review / Skip), tailors a one-page LaTeX resume (PDF + .tex) for every posting worth applying to, commits and pushes those resumes to the repo, adds each one to the Internship Application Tracker Google Sheet, and summarizes everything in the chat. Use whenever the user shares a job URL or posting and asks to run auto-apply, find which jobs are worth applying to, assess or score a posting, or tailor / ATS-optimize the resume for it. It never submits applications.
+description: This is an internship application automation. Input a URL (a careers page, a job-search results page, or a single posting) and the agent will scrape the site for internship postings. It will check whether the candidate is eligible and compute a score on how the candidates master resume matches with internship posting. It then tailors a one-page LaTeX resume (PDF and .tex) for every posting worth applying to. Finally, it adds each posting to the Internship Application Tracker Google Spreadsheet that the candidate has connected the agent to and gives a summary.
+
 ---
 
 # Auto-Apply
 
-Pipeline: **URL → collect postings → assess each → tailor resumes for the ones worth applying to → commit them to the repo → add them to the Google Sheet tracker → summarize in chat.**
+Pipeline: **Search the URL → Scrape internship posting→ assess candidate match for each posting → tailor resumes for the ones worth applying to → add them to the Google Sheet tracker → summarize in chat.**
 
-You do the judgment work (eligibility, skill matching, content selection, rewriting, auditing). The scripts do only mechanical work: `scripts/score.py` verifies evidence and computes fit; `scripts/measure.py` compiles LaTeX and measures the PDF. This skill never submits an application.
+You do the judgment work (eligibility, skill matching, content selection, rewriting, auditing). The scripts do only mechanical work: `scripts/score.py` verifies evidence and computes fit; `scripts/measure.py` compiles LaTeX and measures the PDF. This skill never submits an application, nor does it commit a change.
 
 **Inputs** (paths relative to the repo root):
 - Candidate facts: `auto-apply/candidate.md`
@@ -24,26 +25,24 @@ The template uses no `fontspec`, so the engine is `pdflatex`. measure.py detects
 
 ## Phase 1: Collect postings
 
-1. Fetch the URL. If the fetched text has no job titles (common on JavaScript-rendered career sites such as Workday), open it in the browser and read the page text instead.
+1. Fetch the URL. If the fetched text has no job titles, open it in the browser and read the page text instead.
 2. Decide whether the URL is a **single posting** or a **listing**.
-   - **Single posting:** that posting is the only candidate.
-   - **Listing:** go through every page of results (pagination, "Load more", infinite scroll) and collect each posting's title, URL, location, and job ID. Then open each posting to read its full description.
-3. Screen out, without a full assessment, and record the reason for the final report:
+   - **Single posting:** that posting is the only posting to evaluate.
+   - **Listing:** go through every page of results and collect each posting's title, URL and job ID. Then open each posting to read its full description.
+3. Remove irrelevant postings from the list being assessed
    - **Not an internship:** full-time, new-grad, or experienced roles.
    - **Clearly non-technical:** for example HR, marketing, sales, legal, or finance internships with no technical skills.
-   - **Already tracked:** the tracker sheet already has a row with the same Application Portal URL (or the same job ID inside it), or the same Company and Position. Read the sheet once with the Drive connector's `read_file_content` at the start of the run.
-4. If more than 20 postings remain, show the list and ask the user whether to assess all of them or a subset before continuing.
 
-## Phase 2: Assess each posting
+## Phase 2: Evaluate each Intenship
 
 For every remaining posting, run the steps below. Keep each posting's results (posting info, eligibility, score.py output) for Phases 3 to 6.
 
 1. Read the posting, candidate.md, and the master resume. Note the posting date if one is shown.
-2. Run the eligibility check (rules below). If any rule returns ineligible, the posting gets fit 0% and verdict Skip, with the quoted clause. Do not score it.
+2. Run the eligibility check (rules below). If any rule returns ineligible, automatically give it a verdict of Skip, with the quoted clause. Do not score it.
 3. Extract technical skills from the required and preferred sections. For each, record: section, whether it is emphasized ("strong", "must", "proficient", "expert"), whether it appears in the role title or first responsibility, and mention count including synonyms.
    - Sections headed "Basic", "Minimum", or "Must have" are **required**. Sections headed "Preferred", "Bonus", "Nice to have", or "Plus" are **preferred**. If the posting has no split, treat every listed qualification as required.
    - Extract technical skills only (languages, frameworks, tools, platforms, technical concepts). Skip soft skills, degree requirements, and eligibility items.
-   - Count mentions across the whole posting, including synonyms (for example "ML" and "machine learning" count as one skill).
+   - Count mentions across the whole posting, including synonyms (for example "ML" and "machine learning" count as one skill. PyTorch and TensorFlow or also similar frameworks so they count as synonyms. SQL and PostgreSQL count as synonyms. React and Next.js count as synonyms. These are examples; they are not an exhaustive list).
 4. Match each skill to the master resume, assign a match type, and quote the resume text verbatim as evidence.
 5. Send everything to score.py via stdin (contract below). Use its fit_percent, verdict, weights, and final match types exactly as returned. Never override them and never hand-compute a score.
 
@@ -54,10 +53,10 @@ Each rule returns eligible, ineligible, or unknown. "Ineligible" requires a verb
 1. **Term:** must be Summer 2027. A summer role with no year that was posted fall 2026 or later counts as 2027. "Summer or Fall 2027" passes. Only an explicit different term fails.
 2. **Citizenship:** only "US citizen required" (or equivalent) fails. "US person" and "authorized to work in the US without sponsorship" pass for a permanent resident.
 3. **Clearance:** "must hold or be able to obtain a security clearance" fails. Vague mentions of cleared work are unknown.
-4. **Class standing:** wording keyed to graduation year or grade cohort ("rising juniors", "Class of 2029") defers to rule 5. Wording keyed to time enrolled ("completed two years of study") is checked against one year completed. Bare "juniors and seniors" with no other context is unknown.
-5. **Graduation window:** the posting's range must include May 2029. This is the primary test for standing.
+4. **Class standing:** wording keyed to graduation year or grade cohort ("rising juniors", "Class of 2029") defers to rule 5. Wording keyed to time enrolled ("completed two years of study") is checked against one year completed. If the job posting metions its looking for Juniors and Seniors only the verdict is SKip
+5. **Graduation window:** the posting's range must include May 2029. This is the primary test for standing. If the posting does not have a graduation window, it is fine and it skips this requirement
 6. **Program restrictions:** only an explicit eligibility restriction to a group Raghav is not in fails (demographic, specific schools, first-gen, veterans, membership requirements). Ignore EEO "we encourage X to apply" language.
-7. **GPA minimum:** unknown, since there is no college GPA yet.
+7. **GPA minimum:** No college GPA yet (Assume 4.0)
 
 Overall eligibility sent to the script: `ineligible` if any rule is ineligible, else `unknown` if any rule is unknown, else `eligible`.
 
@@ -68,7 +67,7 @@ Overall eligibility sent to the script: `ineligible` if any rule is ineligible, 
 | exact | Python / Python | 1.0 |
 | alias | Postgres / PostgreSQL | 1.0 |
 | allowed_alternative (posting explicitly permits substitutes) | "Java or similar OOP language" / C++ | 1.0 |
-| adjacent (related skill, posting does not permit substitutes) | "Java" / C++ | 0.5 |
+| adjacent (related skill, posting does not permit substitutes) | "Java" / C++ or "TensorFlow"/"PyTorch" | 0.8 |
 | none | | 0 |
 
 Evidence must be copied verbatim from the master resume. Never paraphrase it.
@@ -124,14 +123,14 @@ If no posting ends up selected, skip Phases 4 and 5 and go straight to the repor
 ## Phase 4: Tailor a resume (each selected posting)
 
 From the posting's assessment, take the company name, role title, work location, and the scored skill list (weights and final match types). Terms:
-- **High-weight skill:** weight ≥ 3 (every required skill; no preferred skill reaches 3).
+- **High-weight skill:** 5 skills that had the highest weights or match with the internship posting
 - **Matched:** match type exact, alias, allowed_alternative, or adjacent.
 - **Unmatched:** final match type none, including downgraded skills.
 
 ### Sources
 
 - The **base template** owns layout and the header: document class, `\input` of the preamble, header block, section and entry macros, spacing.
-- The **master resume** owns all content. Nothing appears on the tailored resume that is not traceable to a specific master-resume entry. Education, entry headings (titles, links, dates), bullets, and skills all come from the master.
+- The **master resume** owns all content. Nothing appears on the tailored resume that is not traceable to a specific master-resume entry. Education, entry headings (titles, links, dates), bullets, and skills all come from the master. However, you are allowed to embelish numbers and rephrase content from the master resume
 - Master bullets carry `% core | tags: ...` comments. Use them as selection hints, and leave them out of the output.
 - The master's Certifications section is never used.
 
@@ -152,17 +151,23 @@ From the posting's assessment, take the company name, role title, work location,
 - Education comes from the master unchanged, except that its Activities line must fit on one line. Drop the least relevant activities to make it fit, and never list one twice.
 - **Skills section layout:** 4 or 5 category lines (never all 6), each fitting on one line.
   - Take the categories from the master's six Skills lists and keep the master's labels exactly: `Programming Languages`, `Frameworks/Platforms`, `DevTools`, `AI/ML`, `Data & Analytics`, `Concepts/Practices`. Do not rename, merge, or invent categories.
-  - Pick the 4 or 5 lists most relevant to the posting. Keep every list that holds a posting-matched skill, and drop the least relevant one (for example `Data & Analytics` for a backend SWE role, or `DevTools` for an analytics role).
+  - Pick the 4 or 5 lists most relevant to the posting. `Concepts/Practices` is always one of them. Keep every list that holds a posting-matched skill, and drop the least relevant one (for example `Data & Analytics` for a backend SWE role, or `DevTools` for an analytics role).
   - Pull in as many ATS-relevant skills from the master's skills inventory as fit on each line. Order: posting-matched skills first, highest weight first. Then add the other master skills in that list that an ATS for this role would look for. Then add the rest of that list until the line is full.
-  - A skill appears on only one line, under its master category. Only skills from the master's Skills section may appear, and unmatched posting skills are never added.
+  - A skill appears on only one line, under its master category. On every line except Concepts/Practices, only skills from the master's Skills section may appear, and unmatched posting skills are never added.
+  - **Concepts/Practices is built from the posting, not copied from the master's list.** Reshuffling the same master terms (Object-Oriented Programming, REST APIs, Unit Testing, Agile, ETL) onto every resume is exactly what to avoid. Build the line fresh for each posting:
+    1. Read the whole posting (team blurb, responsibilities, required and preferred qualifications) and list the technical concepts, methods and practices it asks for, in its own words: for example "Root Cause Analysis", "System Integration", "Data Modeling", "KPI Reporting", "Distributed Systems", "Concurrent Programming", "Code Reviews", "Benchmarking", "Requirements Gathering", "Competitive Analysis". Include ones the role title and team imply (a triage team implies "Log Analysis"; a metrics team implies "Metric Design").
+    2. Keep every concept that Raghav's experience, projects or coursework plausibly touches, even when the master never names it. A little embellishment is welcome on this line: Citation Chain's PostgreSQL tables support "Data Modeling", revising the VLM schema after each wrong prediction supports "Root Cause Analysis", Computer Science II supports "Data Structures". Leave a concept out only when nothing he has done relates to it.
+    3. Order the line by the posting's emphasis, in Title Case, using the posting's wording. Add master Concepts/Practices items only to fill leftover room, and only ones the posting also calls for.
+    4. At least 4 of the line's items come from this posting's own wording, and the line is never a reordering of another resume's Concepts/Practices line.
+    5. Concepts only. Languages, frameworks, libraries, platforms and tools stay master-only on every line, so never list Snowflake, Rust or Tableau because a posting names them. Bullets still follow the rewrite rules and the embellishment boundary below.
   - measure.py only measures bullets, so check the Skills lines in the PDF's text (a wrapped line shows up as an extra line) and drop the lowest-priority skill from any line that wraps.
 
 ### 4.3 Rewrite bullets
 
 - Use the tech-resume-optimizer skill for bullet craft. The rules in this file override it wherever they conflict (for example, never add a summary section).
 - High-weight matched skills get the posting's exact phrasing, placed early in the bullet.
-- Skills marked unmatched are never inserted, anywhere on the page.
-- The Skills section lists only master-resume skills, reordered by weight: posting-matched skills first, highest weight first, then other master skills relevant to the role.
+- Skills marked unmatched are never inserted, anywhere on the page. The one exception is an unmatched concept or practice (never a tool) on the Concepts/Practices line, under the Skills rules above.
+- Outside Concepts/Practices, the Skills section lists only master-resume skills, reordered by weight: posting-matched skills first, highest weight first, then other master skills relevant to the role.
 - Single column, no tables, standard headers. Do not add sections, columns, icons, or graphics.
 - Escape LaTeX special characters in all inserted text: `% & # _ $ { } ~ ^ \` (for example `C\#`, `R\&D`, `40\%`, `\$3.5K`).
 
@@ -187,7 +192,8 @@ Allowed:
 - stronger verbs;
 - reordering what a bullet emphasizes;
 - stating context the source clearly implies;
-- swapping in the posting's term when the match is alias or allowed_alternative.
+- swapping in the posting's term when the match is alias or allowed_alternative;
+- listing a concept or practice the posting names on the Concepts/Practices line when Raghav's work plausibly involved it, even if the master never names it (concepts only, never tools).
 
 Not allowed:
 - new or inflated numbers;
@@ -229,6 +235,7 @@ Run these pass/fail checks:
 7. No verb is repeated within an entry, and tense is consistent: past tense for past roles, present tense for current ones. A role is current if its end date is "Present" or later than today.
 8. The page is full: the last line is less than one line height from the bottom margin (`page_fill.page_full: true`).
 9. The Skills section has 4 or 5 lines, each with a master category label, each fitting on one line, and no skill appears on more than one line.
+10. Concepts/Practices is on the page, at least 4 of its items come from this posting's own wording, none of them is a tool, language or framework, and it is not a reordering of another resume's Concepts/Practices line.
 
 Fix the failures, recompile, and re-check. Stop when all checks pass or after 3 iterations. If it stops at the cap, record the checks that still fail for the report.
 
@@ -240,30 +247,32 @@ When rules conflict, this is the precedence:
 5. Line fill
 6. Keyword density
 
-## Phase 5: Save the resumes, commit, and update the tracker
+## Phase 5: Save the resumes and update the tracker
 
 ### Files
 
 ```
-tailored/Company_Name_Target_Role_Month_Year/
+tailored/Company_Name_Target_Role/
   Raghav_Senthil_Kumar_Target_Role_Resume.pdf
   Raghav_Senthil_Kumar_Target_Role_Resume.tex
 ```
 
-- Target_Role is the role title. Spaces become underscores, special characters are stripped, and repeated underscores collapse to one.
-- Month_Year is the generation date with the month written in full (for example `tailored/Acme_Robotics_Software_Engineering_Intern_September_2026/`, holding `Raghav_Senthil_Kumar_Software_Engineering_Intern_Resume.pdf`).
-- If that directory already exists for a different posting (for example two openings with the same title), append the job ID to the directory name.
+- **No dates in any name.** No directory or file under `tailored/` carries a date, month, year, season or term: not the generation date (`September_2026`) and not the internship term (`Summer_2027`, `2027`).
+- Company_Name is the company as the tracker's Company column names it (for example `General_Dynamics_Information_Technology`, `Hudson_River_Trading`).
+- Target_Role is the posted title cut down to the role itself: drop dates, years, seasons and terms, program names, locations, category prefixes in front of the real role, and filler qualifiers such as "Focused", and write "Internship" as "Intern". Spaces become underscores, special characters are stripped, and repeated underscores collapse to one. These examples are Raghav's own renames:
+
+  | Posted title (company) | Directory | Files |
+  |---|---|---|
+  | Software Engineer Intern - Backend Focused - Summer 2027 (Rippling) | `Rippling_Software_Engineer_Intern_Backend/` | `Raghav_Senthil_Kumar_Software_Engineer_Intern_Backend_Resume.pdf` and `.tex` |
+  | GDIT Summer Internship Program – Summer 2027 Generative AI Software Development Internship (General Dynamics Information Technology) | `General_Dynamics_Information_Technology_Generative_AI_Software_Development_Intern/` | `Raghav_Senthil_Kumar_Generative_AI_Software_Development_Intern_Resume.pdf` and `.tex` |
+  | Software Developer, Network Software Intern (Summer 2027) (Astranis) | `Astranis_Network_Software_Intern/` | `Raghav_Senthil_Kumar_Network_Software_Intern_Resume.pdf` and `.tex` |
+  | Data Scientist Intern - 2027 (Hudson River Trading) | `Hudson_River_Trading_Data_Scientist_Intern/` | `Raghav_Senthil_Kumar_Data_Scientist_Intern_Resume.pdf` and `.tex` |
+
+- If that directory already exists for a different posting (for example two openings with the same title), append the job ID to the directory name, never a date.
 - Only these two files go in the directory. No aux or log files. measure.py compiles elsewhere and copies only the PDF back.
 - The .tex sits two levels below the repo root, so its preamble line is `\input{../../preamble}`.
 - Draft in that same directory, overwriting the two files on each iteration, so the final PDF is the one measure.py last produced from the final .tex.
 
-### Commit and push
-
-1. Stage only this run's files: `git add tailored/<each new directory>`. Never stage other changes in the working tree, and leave them as they are.
-2. Commit with a message naming the postings, for example `Tailor resumes: Acme Robotics (Software Engineering Intern), Globex (Data Science Intern)`, ending with any attribution lines the environment requires.
-3. Push to the current branch's upstream (`git push`). If the push fails, do not force it; report the error and leave the commit local.
-
-**On claude.ai (no repo):** create each directory under `/mnt/user-data/outputs` instead, paste the contents of `preamble.tex` in place of the `\input` line so each .tex is self-contained, present the files, and skip the git steps. Still update the tracker.
 
 ### Update the Internship Application Tracker
 
@@ -299,6 +308,7 @@ The summary goes in the chat response itself. Never save it to a file.
    - **Audit:** one line per check (pass/fail), plus the iteration count.
    - **Space:** entries dropped for space, and lines added to fill the page.
    - **Gaps:** any high-weight skill left out because the master resume has no evidence for it.
+   - **Concepts/Practices:** which posting concepts went on the line and what backs each one.
 
 3. **Skipped postings:** one line each with the reason. For ineligible ones, quote the clause.
 
