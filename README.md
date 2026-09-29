@@ -10,7 +10,7 @@ Version control for my resumes during the Summer 2027 internship cycle. It holds
 master/          Master resume (.tex/.pdf): every bullet I've written. The source of truth; never sent out.
 base/            General one-page resume built from master; also the layout template for tailored resumes.
 preamble.tex     LaTeX preamble shared by every resume (\input by each .tex).
-tailored/        One folder per posting: <Company>_<Role>_<Month>_<Year>/ with the tailored .tex and .pdf.
+tailored/        One folder per posting: <Company>_<Role>/ (no dates) with the tailored .tex and .pdf.
 archive/         Folders for closed or rejected applications (moved here, never deleted).
 auto-apply/      The Claude skill:
   SKILL.md         Pipeline instructions
