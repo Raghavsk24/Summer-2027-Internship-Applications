@@ -1,0 +1,124 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez [Customized by Raghav Senthil Kumar]
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,10pt]{article}
+
+\input{../../preamble}
+
+\begin{document}
+
+\begin{center}
+    {\Huge\bfseries Raghav Senthil Kumar} \\ \vspace{1pt}
+    \small 623-332-2168 $|$ \href{mailto:raghavs9@illinois.edu}{\underline{raghavs9@illinois.edu}} $|$
+    \href{https://linkedin.com/in/raghav-senthil-kumar}{\underline{linkedin.com/in/raghav}} $|$
+    \href{https://github.com/Raghavsk24}{\underline{github.com/raghav}}
+\end{center}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {University of Illinois Urbana-Champaign}{Champaign, IL}
+      {B.S. in Computer Science and Statistics}{Expected: May 2029}
+      \resumeItemListStart
+        \resumeItem{\textbf{Coursework:} Computer Science I (Java), Computer Science II (C++), Data Science \& ML (Python), Calculus III}
+        \resumeItem{\textbf{Activities:} Disruption Lab, SIGRobotics, AI Alignment, Agentic AI, BuildIllinois, Innovation LLC}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{Founding Software Engineer $|$ Clusion}}{September 2025 -- January 2026}
+      \resumeItemListStart
+        \resumeItem{Coded the document search engine for a debate research SaaS platform using \emph{Python} (\emph{FastAPI}) and \emph{Elasticsearch}}
+        \resumeItem{Collaborated with \textbf{10 engineers} in an \emph{Agile} team on an \emph{AWS}-hosted SaaS platform drawing \textbf{10K+ site visitors}}
+        \resumeItem{Designed and built a text-retrieval algorithm that validates source URLs and filters statistical outliers with \textbf{IQR}}
+        \resumeItem{Configured \emph{Elasticsearch} to index \textbf{600K+} debate-evidence documents and return results in \textbf{under 1 second}}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Product Development Intern $|$ Jetson}}{January 2025 -- February 2025}
+      \resumeItemListStart
+        \resumeItem{Communicated recommendations directly to the CEO in a \textbf{5-page report} on strategies to optimize user engagement}
+        \resumeItem{Applied UX design through \textbf{7 iterations of UI/UX testing} on \textbf{3 experimental features} for \textbf{100K+ users}}
+        \resumeItem{Redesigned onboarding UX in \emph{Figma}, cutting it from \textbf{12 to 5 pages}, and validated design with \textbf{A/B testing}}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Data Analytics Intern $|$ STEM E}}{June 2024 -- July 2024}
+      \resumeItemListStart
+        \resumeItem{Analyzed \textbf{200+ TikTok posts} spanning \textbf{3 years} with \emph{Hootsuite}, \emph{Microsoft Excel}, \emph{Power BI} and \emph{Python} (\emph{pandas})}
+        \resumeItem{Found through data analysis that ``science fun facts'' posts earned \textbf{69.3\%} of views from just \textbf{7\%} of all content}
+        \resumeItem{Persuaded the Executive Director to adopt a ``fun facts'' strategy that improved engagement \textbf{24\%} (8K+ views)}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{Citation Chain} $|$ \href{https://citation-chain-two.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Citation-Chain}{\underline{Source Code}}}{June 2026}
+      \resumeItemListStart
+        \resumeItem{Added a \textbf{RAG} agent (\emph{Claude Sonnet 4.5}) that answers from session-scoped vector documents via \emph{Supermemory}}
+        \resumeItem{Integrated external \emph{OpenAlex} and \emph{Semantic Scholar} APIs into a data pipeline that backfills paper metadata}
+        \resumeItem{Modeled paper data in \emph{PostgreSQL} on \emph{Supabase} and queried it with \emph{SQL} by field, year and total citation count}
+        \resumeItem{Developed a web UI on \emph{React Flow} that graphs each paper's outbound citations across \textbf{26 research fields}}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Truck Pricing VLM} $|$ \href{https://truck-pricing-vlm.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Truck-Pricing-VLM}{\underline{Source Code}}}{September 2026}
+      \resumeItemListStart
+        \resumeItem{Built a truck-pricing MVP that uses a \emph{JSON schema} to guide a \emph{Claude Sonnet 4.6} agent in reading truck photos}
+        \resumeItem{Applied prompt engineering to improve AI responses, refining the schema until \textbf{10 consecutive images} were right}
+        \resumeItem{Audited data quality across \textbf{15,000} truck-listing images by de-duplicating listings and filtering non-USD prices}
+        \resumeItem{Developed an analytical \emph{quantile regression} model that estimates prices with \textbf{87\% accuracy} on \textbf{30 samples}}
+        \resumeItem{Won \textbf{\underline{2nd Place at UIUC Founder's Hackathon}} leading team of \textbf{4} on pricing algorithm for Kamion (YC S22)}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{SchoolPulse AI} $|$ \href{https://school-pulse-ai.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/vignesh-nagarajan-vn/SchoolPulse-AI}{\underline{Source Code}}}{June 2026}
+      \resumeItemListStart
+        \resumeItem{Built a voice interface where a \emph{Gemma} Voice LLM delivers steps from \textbf{4 Random Forest} anomaly models}
+        \resumeItem{Directed a team of 5 from ideation and development to the final presentation. \textbf{\underline{USAII Global Hackathon Finalist}}}
+        \resumeItem{Wrote a \emph{Python} \emph{FastAPI} back end that ingests water, waste and energy data from all \textbf{3 tools} to detect anomalies}
+        \resumeItem{Developed \textbf{3 edge AI tools} that collect data on a school's energy, water and food use for anomaly detection}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Chronos} $|$ \href{https://usechronos.live/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Chronos}{\underline{Source Code}}}{December 2025}
+      \resumeItemListStart
+        \resumeItem{Built a \emph{React}/\emph{Firebase} scheduling agent that books meetings for groups of \textbf{30+ people} on Google Calendar}
+        \resumeItem{Designed a \textbf{5-step} \emph{Python} scheduling algorithm that scans calendars, ranks time slots and emails confirmations}
+        \resumeItem{Tested the algorithm across \textbf{14 unit and integration test cases} from availability scan to booking confirmation}
+        \resumeItem{Signed \textbf{2 LOIs worth \$3.5K} and licensed Chronos to \textbf{8 startups}. \textbf{\underline{Won 2025 Congressional App Challenge}}}
+      \resumeItemListEnd
+
+    \resumeSubHeadingListEnd
+
+
+%-----------SKILLS-----------
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \item{
+     \textbf{Programming Languages}{: Python, SQL, JavaScript, Java, C++, HTML/CSS} \\
+     \textbf{Frameworks/Platforms}{: FastAPI, Next.js, React, AWS, Flask, Node.js, Supabase, PostgreSQL, Vercel, Firebase} \\
+     \textbf{AI/ML}{: Claude API, Hugging Face, Vercel AI SDK, Gemma 4, Supermemory, PyTorch, scikit-learn, TensorFlow} \\
+     \textbf{DevTools}{: Figma, Git, GitHub, Claude Code, Codex, Docker, CI/CD, VS Code, Bun, Clang, Catch2, Arduino IDE} \\
+     \textbf{Concepts/Practices}{: Generative AI, Prompt Engineering, Text2SQL, Data Engineering, LLMs, RAG}
+    }
+ \end{itemize}
+ \vspace{3.53pt}
+
+%-------------------------------------------
+\end{document}

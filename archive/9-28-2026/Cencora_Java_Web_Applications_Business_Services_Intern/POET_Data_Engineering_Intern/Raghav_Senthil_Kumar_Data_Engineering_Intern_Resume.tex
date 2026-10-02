@@ -1,0 +1,123 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez [Customized by Raghav Senthil Kumar]
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,10pt]{article}
+
+\input{../../preamble}
+
+\begin{document}
+
+\begin{center}
+    {\Huge\bfseries Raghav Senthil Kumar} \\ \vspace{1pt}
+    \small 623-332-2168 $|$ \href{mailto:raghavs9@illinois.edu}{\underline{raghavs9@illinois.edu}} $|$
+    \href{https://linkedin.com/in/raghav-senthil-kumar}{\underline{linkedin.com/in/raghav}} $|$
+    \href{https://github.com/Raghavsk24}{\underline{github.com/raghav}}
+\end{center}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {University of Illinois Urbana-Champaign}{Champaign, IL}
+      {B.S. in Computer Science and Statistics}{Expected: May 2029}
+      \resumeItemListStart
+        \resumeItem{\textbf{Coursework:} Computer Science I (Java), Computer Science II (C++), Data Science \& ML (Python), Calculus III}
+        \resumeItem{\textbf{Activities:} Disruption Lab, SIGRobotics, AI Alignment, Agentic AI, BuildIllinois, Innovation LLC}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{Founding Software Engineer $|$ Clusion}}{September 2025 -- January 2026}
+      \resumeItemListStart
+        \resumeItem{Built a \emph{Python} (\emph{FastAPI}) data pipeline that collects, cleans, transforms and delivers \textbf{600K+ debate-evidence documents} via \emph{Elasticsearch}, returning results in \textbf{under 1 second} for a high school debate research SaaS platform}
+        \resumeItem{Identified and resolved data quality issues, de-duplicating the \textbf{30\%} of evidence documents that were identical}
+        \resumeItem{Validated source URLs and filtered statistical outliers (\textbf{IQR} on word counts) to extract clean evidence segments}
+        \resumeItem{Worked in an \emph{Agile} team of \textbf{10 engineers} to keep data quality high and deliver search to \textbf{10K+ site visitors}}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Product Development Intern $|$ Jetson}}{January 2025 -- February 2025}
+      \resumeItemListStart
+        \resumeItem{Participated in testing and validating \textbf{3 experimental features} across \textbf{7 iterations of UI/UX testing}}
+        \resumeItem{Created documentation of test findings in a \textbf{5-page report} with strategies to optimize user engagement for the CEO}
+        \resumeItem{Validated a redesigned \emph{Figma} onboarding flow, cutting it from \textbf{12 to 5 pages} through \textbf{A/B testing} with 30 users}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Data Analytics Intern $|$ STEM E}}{June 2024 -- July 2024}
+      \resumeItemListStart
+        \resumeItem{Analyzed data from \textbf{200+ TikTok posts} over \textbf{3 years} with \emph{Python} (\emph{pandas}), \emph{Power BI} and \emph{Microsoft Excel}}
+        \resumeItem{Used the data analysis to identify that ``science fun facts'' drove \textbf{69.3\%} of views from only \textbf{7\%} of all content}
+        \resumeItem{Delivered measurable value with a ``fun facts'' strategy the Executive Director adopted, lifting engagement \textbf{24\%}}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{Citation Chain} $|$ \href{https://citation-chain-two.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Citation-Chain}{\underline{Source Code}}}{June 2026}
+      \resumeItemListStart
+        \resumeItem{Wrote \emph{SQL} queries on a relational \emph{PostgreSQL} database to retrieve papers by field, year and citation count}
+        \resumeItem{Built a dual-API data pipeline that collects papers from \emph{OpenAlex} and backfills metadata from \emph{Semantic Scholar}}
+        \resumeItem{Integrated the \emph{Claude API} and \emph{Supermemory} into a \textbf{RAG} agent that retrieves session-scoped vector data}
+        \resumeItem{Delivered data visualization of a paper's outbound citations across \textbf{26 research fields} in a \emph{React Flow} graph}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{SchoolPulse AI} $|$ \href{https://school-pulse-ai.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/vignesh-nagarajan-vn/SchoolPulse-AI}{\underline{Source Code}}}{June 2026}
+      \resumeItemListStart
+        \resumeItem{Built a \emph{Python} \emph{FastAPI} back end that pulls live water, waste and energy readings from all \textbf{3 edge AI tools}}
+        \resumeItem{Flagged data anomalies with \textbf{4 Random Forest models} and delivered actionable steps via a \emph{Gemma} Voice LLM}
+        \resumeItem{Created \textbf{3 edge AI tools} that collect data on a school's energy, water and food consumption for anomaly detection}
+        \resumeItem{Led a team of 5 to deliver the data product from ideation to presentation. \textbf{\underline{USAII Global Hackathon Finalist}}}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Truck Pricing VLM} $|$ \href{https://truck-pricing-vlm.vercel.app/}{\underline{Live Website}} $|$ \href{https://github.com/Raghavsk24/Truck-Pricing-VLM}{\underline{Source Code}}}{September 2026}
+      \resumeItemListStart
+        \resumeItem{Collected \textbf{15,000} truck-listing images and cleaned the dataset by de-duplicating listings and filtering non-USD prices}
+        \resumeItem{Tested and validated the extraction, fixing each wrong prediction until \textbf{10 consecutive images} came back right}
+        \resumeItem{Transformed truck photos into structured condition, brand, model and year data with a \emph{Claude Sonnet 4.6} agent}
+        \resumeItem{Trained a \emph{quantile regression} pricing model on extracted data and validated \textbf{87\% accuracy} on \textbf{30 samples}}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{EcoBin} $|$ \href{https://arxiv.org/abs/2606.15547}{\underline{Research Paper}} $|$ \href{https://github.com/Raghavsk24/EcoBin}{\underline{Source Code}}}{March 2026 -- May 2026}
+      \resumeItemListStart
+        \resumeItem{Built an automated synthetic data pipeline (\emph{U2-Net} segmentation, alpha-compositing) that generates \textbf{9K} images}
+        \resumeItem{Created documentation of the data and the model's methodology in an \emph{arXiv} paper, releasing \textbf{2 datasets} on \emph{Kaggle}}
+        \resumeItem{Tested and validated a two-stage \emph{EfficientNetV2-S} classifier on \textbf{15K+ images}, reaching \textbf{96.13\% accuracy}}
+        \resumeItem{Validated a new smart bin prototype on an \emph{Arduino Uno} that sorts each waste item in under \textbf{2 seconds} of latency}
+      \resumeItemListEnd
+
+    \resumeSubHeadingListEnd
+
+
+%-----------SKILLS-----------
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \item{
+     \textbf{Programming Languages}{: SQL, Python, Java, JavaScript, C++, HTML/CSS} \\
+     \textbf{Frameworks/Platforms}{: PostgreSQL, MySQL, Supabase, Elasticsearch, FastAPI, AWS, Flask, OpenAlex API, React} \\
+     \textbf{DevTools}{: Git, GitHub, CI/CD, Docker, VS Code, Claude Code, Codex, Figma, Bun, Arduino IDE, Kaggle, Clang} \\
+     \textbf{Data \& Analytics}{: pandas, NumPy, Microsoft Excel, Power BI, A/B Testing, Hootsuite} \\
+     \textbf{Concepts/Practices}{: Data Pipelines, Data Quality, Data Transformation, Data Validation, Relational Databases}
+    }
+ \end{itemize}
+ \vspace{3.53pt}
+
+%-------------------------------------------
+\end{document}
